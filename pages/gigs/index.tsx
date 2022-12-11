@@ -1,7 +1,7 @@
 import { useSupabaseClient, Session, useUser } from "@supabase/auth-helpers-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import A from "../../components/A";
+import Button from "../../components/Button";
 // @ts-ignore
 import { Database } from '../utils/database.types'
 
@@ -15,35 +15,55 @@ export default function Gigs({ session }: { session: Session }) {
 	const [loading, setLoading] = useState(true)
 	const [gigs, setGigs] = useState<any[]>()
 
+	async function queryAllGigs() {
+		try {
+			setLoading(true)
+
+
+			let { data, error, status } = await supabase
+				.from('gigs')
+				.select(`id, is_paid, amount_due`)
+
+			if (error && status !== 406) {
+				throw error
+			}
+
+			if (data) {
+				console.log("Success!", data);
+				setGigs(data)
+			}
+		} catch (error) {
+			// alert('Error loading user data!')
+			console.log(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	async function addNewGig() {
+		try {
+			setLoading(true)
+			const { data, error } = await supabase
+				.from('gigs')
+				.insert([
+					{
+						user_id: "4959fadc-9ff0-4244-b06a-8b1d85795d50",
+						amount_due: Math.random() * 10_000,
+					}
+				])
+		}
+		catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+			queryAllGigs()
+		}
+	}
+
 
 	useEffect(() => {
-		async function queryAllGigs() {
-			try {
-				setLoading(true)
-				if (!user) return <></>
-
-				let { data, error, status } = await supabase
-					.from('gigs')
-					.select(`id, is_paid, amount_due`)
-
-				if (error && status !== 406) {
-					throw error
-				}
-
-				if (data) {
-					console.log("Success!", data);
-					setGigs(data)
-				}
-			} catch (error) {
-				// alert('Error loading user data!')
-				console.log(error)
-			} finally {
-				setLoading(false)
-			}
-		}
-
-		queryAllGigs()
-	}, [session, supabase, user])
+		if (user) queryAllGigs()
+	}, [user])
 
 	return <>
 		<h1 className="text-3xl my-2">Gigs!</h1>
@@ -72,6 +92,7 @@ export default function Gigs({ session }: { session: Session }) {
 
 
 		</section>
+		<Button label="Add sample gig" onClick={() => addNewGig()} />
 		<A href="/" label="go home" />
 	</>
 
