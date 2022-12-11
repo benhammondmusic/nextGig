@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient, Session } from '@supabase/auth-helpers-react'
 // @ts-ignore
 import { Database } from '../utils/database.types'
-import Avatar from './Avatar'
+// import Avatar from './Avatar'
 import Link from 'next/link'
 
 type Profiles = Database['public']['Tables']['profiles']['Row']
@@ -11,8 +11,6 @@ export default function Account({ session }: { session: Session }) {
 	const supabase = useSupabaseClient<Database>()
 	const user = useUser()
 	const [loading, setLoading] = useState(true)
-	const [username, setUsername] = useState<Profiles['username']>(null)
-	const [website, setWebsite] = useState<Profiles['website']>(null)
 	const [avatar_url, setAvatarUrl] = useState<Profiles['avatar_url']>(null)
 
 	useEffect(() => {
@@ -23,7 +21,7 @@ export default function Account({ session }: { session: Session }) {
 
 				let { data, error, status } = await supabase
 					.from('profiles')
-					.select(`username, website, avatar_url`)
+					.select(`avatar_url`)
 					.eq('id', user.id)
 					.single()
 
@@ -32,8 +30,6 @@ export default function Account({ session }: { session: Session }) {
 				}
 
 				if (data) {
-					setUsername(data.username)
-					setWebsite(data.website)
 					setAvatarUrl(data.avatar_url)
 				}
 			} catch (error) {
