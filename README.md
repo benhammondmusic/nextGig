@@ -2,16 +2,16 @@
 
 > A gig management app
 
-[benhammond.tech](https://benhammond.tech)
+from [benhammond.tech](https://benhammond.tech)
 
 
 ## To Do:
-- [ ] basic auth for supabase
+- [x] basic auth for supabase
 - [ ] C
-- [ ] R
+- [x] R
 - [ ] U
 - [ ] D
-- [ ] add tailwind
+- [x] add tailwind
 - [ ] use tailwind
 - [ ] fill in schema / real gig, venue, client fields
 
