@@ -19,7 +19,7 @@ export default function Gigs({ session }: { session: Session }) {
 		async function queryAllGigs() {
 			try {
 				setLoading(true)
-				if (!user) throw new Error('No user')
+				if (!user) return <></>
 
 				let { data, error, status } = await supabase
 					.from('gigs')
@@ -34,7 +34,7 @@ export default function Gigs({ session }: { session: Session }) {
 					setGigs(data)
 				}
 			} catch (error) {
-				alert('Error loading user data!')
+				// alert('Error loading user data!')
 				console.log(error)
 			} finally {
 				setLoading(false)
