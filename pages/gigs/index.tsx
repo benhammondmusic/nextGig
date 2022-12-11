@@ -48,7 +48,7 @@ export default function Gigs({ session }: { session: Session }) {
 				.insert([
 					{
 						user_id: "4959fadc-9ff0-4244-b06a-8b1d85795d50",
-						amount_due: Math.random() * 10_000,
+						amount_due: Math.floor(Math.random() * 10_000),
 					}
 				])
 		}
