@@ -4,6 +4,7 @@ import { useUser, useSupabaseClient, Session } from '@supabase/auth-helpers-reac
 import { Database } from '../utils/database.types'
 // import Avatar from './Avatar'
 import Link from 'next/link'
+import Button from './Button'
 
 type Profiles = Database['public']['Tables']['profiles']['Row']
 
@@ -72,7 +73,7 @@ export default function Account({ session }: { session: Session }) {
 	}
 
 	return (
-		<div className="form-widget">
+		<div className="">
 			{/* {user && <Avatar
 				uid={user.id}
 				url={avatar_url}
@@ -88,7 +89,7 @@ export default function Account({ session }: { session: Session }) {
 			</div>
 			<div>
 				<button
-					className="button primary block"
+					className=""
 					onClick={() => updateProfile({ avatar_url })}
 					disabled={loading}
 				>
@@ -100,9 +101,8 @@ export default function Account({ session }: { session: Session }) {
 
 
 			<div>
-				<button className="button block" onClick={() => supabase.auth.signOut()}>
-					Sign Out
-				</button>
+				<Button onClick={() => supabase.auth.signOut()} label={"Sign Out"} />
+
 			</div>
 		</div>
 	)

@@ -1,6 +1,7 @@
 import { useSupabaseClient, Session, useUser } from "@supabase/auth-helpers-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import A from "../../components/A";
 // @ts-ignore
 import { Database } from '../utils/database.types'
 
@@ -45,12 +46,33 @@ export default function Gigs({ session }: { session: Session }) {
 	}, [session, supabase, user])
 
 	return <>
-		<h1>Gigs!</h1>
-		{gigs?.map((gig) => {
-			return <div key={gig.id}>
-				<p><b>Amount Due:</b> ${gig["amount_due"]} <b>Paid In Full:</b> {gig["is_paid"] ? "Yes" : "No"}</p>
-			</div>
-		})}
-		<Link href="/">go home</Link>
+		<h1 className="text-3xl my-2">Gigs!</h1>
+
+		<section className="bg-slate-300 m-5 w-fit">
+
+			<table className="table-auto">
+				<thead>
+					<tr className="bg-slate-200">
+						<th className="text-start w-20"><b>#</b></th>
+						<th className="text-start w-40"><b>Amount Due</b></th>
+						<th className="text-start w-40"><b>Paid?</b></th>
+					</tr>
+				</thead>
+				<tbody>
+					{gigs?.map((gig, i) => {
+						return <tr key={gig["id"]} className={i % 2 ? "bg-slate-200" : ""}>
+							<td className="">{gig["id"]}</td>
+							<td className="">${gig["amount_due"]}</td>
+							<td className="">{gig["is_paid"] ? "Yes" : "No"}</td>
+						</tr>
+					})}
+				</tbody>
+
+			</table>
+
+
+		</section>
+		<A href="/" label="go home" />
 	</>
+
 }
