@@ -29,7 +29,6 @@ export default function Gigs({ session }: { session: Session }) {
 			}
 
 			if (data) {
-				console.log("Success!", data);
 				setGigs(data)
 			}
 		} catch (error) {
@@ -60,12 +59,28 @@ export default function Gigs({ session }: { session: Session }) {
 		}
 	}
 
+	async function deleteGig(id: number) {
+		try {
+			setLoading(true)
+			await supabase
+				.from('gigs')
+				.delete()
+				.match({ id })
+		}
+		catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+			queryAllGigs()
+		}
+	}
+
 
 	useEffect(() => {
 		if (user) queryAllGigs()
 	}, [user])
 
-	return <>
+	return <div className={loading ? "!cursor-wait" : ""}>
 		<h1 className="text-3xl my-2">Gigs!</h1>
 
 		<section className="bg-slate-300 m-5 w-fit">
@@ -76,6 +91,7 @@ export default function Gigs({ session }: { session: Session }) {
 						<th className="text-start w-20"><b>#</b></th>
 						<th className="text-start w-40"><b>Amount Due</b></th>
 						<th className="text-start w-40"><b>Paid?</b></th>
+						<th className="text-start w-40"><b>Delete Gig</b></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -84,6 +100,8 @@ export default function Gigs({ session }: { session: Session }) {
 							<td className="">{gig["id"]}</td>
 							<td className="">${gig["amount_due"]}</td>
 							<td className="">{gig["is_paid"] ? "Yes" : "No"}</td>
+							<td className=""><Button label={"X"} onClick={() => deleteGig(gig["id"])} /></td>
+
 						</tr>
 					})}
 				</tbody>
@@ -92,8 +110,8 @@ export default function Gigs({ session }: { session: Session }) {
 
 
 		</section>
-		<Button label="Add sample gig" onClick={() => addNewGig()} />
+		<Button label="Add sample gig" onClick={() => addNewGig()} disabled={loading} />
 		<A href="/" label="go home" />
-	</>
+	</div>
 
 }

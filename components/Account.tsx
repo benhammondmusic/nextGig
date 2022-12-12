@@ -5,6 +5,7 @@ import { Database } from '../utils/database.types'
 // import Avatar from './Avatar'
 import Link from 'next/link'
 import Button from './Button'
+import A from './A'
 
 type Profiles = Database['public']['Tables']['profiles']['Row']
 
@@ -72,32 +73,23 @@ export default function Account({ session }: { session: Session }) {
 		}
 	}
 
+	const email = session?.user?.email ?? "Email not found"
+
 	return (
-		<div className="">
-			{/* {user && <Avatar
-				uid={user.id}
-				url={avatar_url}
-				size={150}
-				onUpload={(url) => {
-					setAvatarUrl(url)
-					updateProfile({ avatar_url: url })
-				}}
-			/>} */}
-			<div>
-				<label htmlFor="email">Email</label>
-				<input id="email" type="text" value={session.user.email} disabled />
+		<div className=''>
+			<div className="bg-slate-300 flex justify-end">
+				<label htmlFor="email">🎼</label>
+				<input className="font-thin w-30" id="email" type="text" value={session.user.email} size={email.length + 2} disabled />
 			</div>
 			<div>
-				<button
-					className=""
+				<Button
 					onClick={() => updateProfile({ avatar_url })}
 					disabled={loading}
-				>
-					{loading ? 'Loading ...' : 'Update'}
-				</button>
+					label={loading ? 'Loading ...' : 'Update'}
+				/>
 			</div>
 
-			<Link href="/gigs">view gigs</Link>
+			<A href="/gigs" label={"view gigs"} />
 
 
 			<div>

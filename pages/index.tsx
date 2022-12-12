@@ -9,7 +9,9 @@ const Home = () => {
   return (
     <div  >
       {!session ? (
-        <Auth supabaseClient={supabase} />
+        <div className='flex justify-center'>
+          <Auth supabaseClient={supabase} />
+        </div>
       ) : (
         <Account session={session} />
       )}

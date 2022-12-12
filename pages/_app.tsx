@@ -13,9 +13,11 @@ function MyApp({
   const [supabase] = useState(() => createBrowserSupabaseClient())
 
   return (
+
     <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
       <Component {...pageProps} />
     </SessionContextProvider>
+
   )
 }
 export default MyApp
