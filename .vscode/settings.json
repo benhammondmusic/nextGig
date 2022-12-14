@@ -1,3 +1,9 @@
 {
-  "cSpell.words": ["Supa"]
+  "cSpell.words": [
+    "headlessui",
+    "heroicons",
+    "Supa"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

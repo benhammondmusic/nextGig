@@ -1,14 +1,20 @@
 
-interface ButtonProps {
+interface BtnProps {
 	label: string;
 	onClick: Function;
-	disabled?: boolean
+	size?: "xs"
+	loading?: boolean
 }
 
-export default function Button(props: ButtonProps) {
+export default function Btn(props: BtnProps) {
+
+	const sizeOverride = props.size ? "text-xs" : ""
+	const cursorOverride = props.loading ? "!cursor-wait" : ""
+	// const cursorOverride = "!cursor-wait"
+
 	return <button
-		disabled={props.disabled}
-		className="bg-slate-800 text-slate-50 p-2 rounded-md m-2"
+		disabled={props.loading}
+		className={`bg-slate-800 text-slate-50 p-2 rounded-md m-2 ${cursorOverride} ${sizeOverride}`}
 		onClick={() => props.onClick()}
 	>{props.label}</button>
 }
