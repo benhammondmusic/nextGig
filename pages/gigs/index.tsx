@@ -15,7 +15,6 @@ export default function Gigs({ session }: { session: Session }) {
 
 	const supabase = useSupabaseClient<Database>()
 	const user = useUser()
-
 	const [loading, setLoading] = useState(true)
 	const [gigs, setGigs] = useState<any[]>()
 	const [venues, setVenues] = useState<any[]>()
@@ -26,8 +25,8 @@ export default function Gigs({ session }: { session: Session }) {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('gigs')
-				.select(`id, is_paid, amount_due, start, venue`)
-				.order('id')
+				.select(`id, is_paid, amount_due, start, end, venue, client`)
+				.order('start')
 
 			if (error && status !== 406) {
 				throw error
@@ -37,7 +36,6 @@ export default function Gigs({ session }: { session: Session }) {
 				setGigs(data)
 			}
 		} catch (error) {
-			// alert('Error loading user data!')
 			console.log(error)
 		} finally {
 			setLoading(false)
@@ -71,7 +69,7 @@ export default function Gigs({ session }: { session: Session }) {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('clients')
-				.select(`id, name, email, phone`)
+				.select(`id, name, address, email, phone`)
 				.order('name')
 
 			if (error && status !== 406) {
@@ -126,8 +124,30 @@ export default function Gigs({ session }: { session: Session }) {
 			console.log(error)
 		} finally {
 			setLoading(false)
-			queryAllGigs()
 			queryAllVenues()
+			return resp
+		}
+	}
+
+	async function addNewClient(clientInfo: any) {
+
+		let resp
+		try {
+			setLoading(true)
+			const { data, error } = await supabase
+				.from('clients')
+				.insert([clientInfo])
+				.select()
+
+			resp = data?.[0]
+		}
+
+
+		catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+			queryAllClients()
 			return resp
 		}
 	}
@@ -191,12 +211,13 @@ export default function Gigs({ session }: { session: Session }) {
 						<th className="text-start w-40"><b>Amount Due</b></th>
 						<th className="text-start w-40"><b>Paid?</b></th>
 						<th className="text-start w-40"><b>Delete Gig</b></th>
+						<th className="text-start w-40"><b>Client</b></th>
 					</tr>
 				</thead>
 				<tbody>
 					{gigs?.map((gig, i) => {
 
-						const { id, amount_due, is_paid, start, venue: venueId } = gig
+						const { id, amount_due, is_paid, start, venue: venueId, client: clientId } = gig
 
 						const startDT = new Date(start)
 						const startTime = startDT.toLocaleString('en-US', { hour: 'numeric', hour12: true, minute: '2-digit' })
@@ -209,6 +230,7 @@ export default function Gigs({ session }: { session: Session }) {
 							<td className="">${amount_due}</td>
 							<td className="">{is_paid ? "Yes" : "No"} <BenButton loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /> </td>
 							<td className=""><BenButton loading={loading} label={"X"} onClick={() => deleteGig(gig["id"])} /></td>
+							<td className="">{clients?.find((client) => client.id === clientId)?.name}</td>
 
 						</tr>
 					})}
@@ -230,7 +252,16 @@ export default function Gigs({ session }: { session: Session }) {
 
 	</div>
 
-		<Modal addNewGig={addNewGig} addNewVenue={addNewVenue} open={modalOpen} setOpen={setModalOpen} focusButtonRef={focusModalButtonRef} venues={venues} clients={clients} />
+		<Modal
+			addNewGig={addNewGig}
+			addNewVenue={addNewVenue}
+			addNewClient={addNewClient}
+			open={modalOpen}
+			setOpen={setModalOpen}
+			focusButtonRef={focusModalButtonRef}
+			venues={venues}
+			clients={clients}
+		/>
 
 
 	</>)

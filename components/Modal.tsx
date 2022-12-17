@@ -4,11 +4,15 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import Dropdown from './Dropdown';
 import BenButton from './BenButton';
 import { AddNewVenueForm } from './AddNewVenueForm';
+import { AddNewClientForm } from './AddNewClientForm';
 
 // https://tailwindui.com/components/application-ui/forms/input-groups
 
 
 function newGigReducer(state: any, action: any) {
+
+	console.log(state);
+
 	switch (action.type) {
 		case 'update_field': {
 			return {
@@ -21,13 +25,13 @@ function newGigReducer(state: any, action: any) {
 }
 
 const initialNewGigState = {
-	venueId: undefined,
-	clientId: undefined,
-	price: undefined,
-	startTime: undefined,
-	startDate: new Date().toISOString().slice(0, 10),
-	endTime: undefined,
-	endDate: undefined,
+	venueId: null,
+	clientId: null,
+	price: null,
+	startTime: "",
+	startDate: "",
+	endTime: "",
+	endDate: "",
 	is_paid: false
 };
 
@@ -39,7 +43,8 @@ interface ModalProps {
 	venues: any[] | undefined,
 	clients: any[] | undefined,
 	addNewGig: Function,
-	addNewVenue: Function
+	addNewVenue: Function,
+	addNewClient: Function,
 }
 
 export default function Modal(props: ModalProps) {
@@ -47,6 +52,7 @@ export default function Modal(props: ModalProps) {
 	const [newGigState, dispatchNewGig] = useReducer(newGigReducer, initialNewGigState);
 	const { open, setOpen, focusButtonRef } = props
 	const [showAddVenueForm, setShowAddVenueForm] = useState(false)
+	const [showAddClientForm, setShowAddClientForm] = useState(false)
 
 	function handleSubmitNewGig() {
 
@@ -56,7 +62,7 @@ export default function Modal(props: ModalProps) {
 			venue: venueId,
 			client: clientId,
 			amount_due: price,
-			start: startDate && startTime ? `${startDate}T${startTime}:00.000000+00:00` : null,
+			start: startDate && startTime ? `${startDate}T${startTime}:00.000000+00:00` : undefined,
 			end: endDate && endTime ? `${endDate}T${endTime}:00.000000+00:00` : null,
 			is_paid: false
 		}
@@ -68,6 +74,10 @@ export default function Modal(props: ModalProps) {
 		setShowAddVenueForm(true)
 	}
 
+
+	function handleAddNewClient() {
+		setShowAddClientForm(true)
+	}
 
 	function handleFieldUpdate(fieldName: string, fieldValue: any) {
 		dispatchNewGig({
@@ -125,7 +135,7 @@ export default function Modal(props: ModalProps) {
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="date" id="start-date"
 														value={newGigState.startDate}
-														onChange={(e) => handleFieldUpdate("startDate", e.target.value)}
+														onChange={(e) => handleFieldUpdate("startDate", new Date(e.target.value).toISOString().slice(0, 10))}
 													/>
 												</div>
 												<div className="my-3 ">
@@ -134,7 +144,7 @@ export default function Modal(props: ModalProps) {
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="time" id="start-time"
 
 														value={newGigState.startTime}
-														onChange={(e) => handleFieldUpdate("stateTime", e.target.value)}
+														onChange={(e) => handleFieldUpdate("startTime", e.target.value)}
 													/>
 												</div>
 											</div>
@@ -190,20 +200,6 @@ export default function Modal(props: ModalProps) {
 														Location
 													</label>
 													<div className="relative mt-1 rounded-md shadow-sm">
-														{/* <datalist id="venues">
-															{props.venues?.map((venue: any) => <option value={venue["name"]} key={venue["name"]} />) ?? undefined}
-														</datalist>
-														<input
-															type="text"
-															list={"venues"}
-															id="price"
-															className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-															value={newGigVenueId}
-															onChange={(e) => setNewGigVenueId(props.venues?.find((venue) => venue["name"] === e.target.value))}
-														/> */}
-
-
-
 
 														{showAddVenueForm ? <>
 															<AddNewVenueForm
@@ -231,10 +227,6 @@ export default function Modal(props: ModalProps) {
 															</>
 														}
 
-
-
-
-
 													</div>
 												</div>
 											</div>
@@ -245,17 +237,36 @@ export default function Modal(props: ModalProps) {
 														Client
 													</label>
 													<div className="relative mt-1 rounded-md shadow-sm">
-														<datalist id="venues">
-															{props.clients?.map((client: any) => <option value={client["name"]} key={client["name"]} />) ?? undefined}
-														</datalist>
-														<input
-															type="text"
-															list={"clients"}
-															id="client"
-															className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-															value={newGigState.clientId}
-															onChange={(e) => handleFieldUpdate("clientId", e.target.value)}
-														/>
+
+
+														{showAddClientForm ? <>
+															<AddNewClientForm
+																addNewClient={props.addNewClient} setShowAddClientForm={setShowAddClientForm}
+																handleFieldUpdate={handleFieldUpdate}
+															/>
+															<span className="mx-3">or</span>
+															<BenButton
+																label="Choose existing client"
+																onClick={() => setShowAddClientForm(false)}
+															/>
+														</>
+															: <>
+																<Dropdown
+																	id="client"
+																	menuItems={props.clients || []}
+																	selectedItem={newGigState.clientId}
+																	setSelectedItem={(clientId: number) => handleFieldUpdate("clientId", clientId)}
+																/>
+																<span className="mx-3">or</span>
+																<BenButton
+																	label="Create new client"
+																	onClick={() => handleAddNewClient()}
+																/>
+															</>
+														}
+
+
+
 
 													</div>
 												</div>
