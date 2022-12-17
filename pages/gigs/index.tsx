@@ -1,10 +1,10 @@
 import { useSupabaseClient, Session, useUser } from "@supabase/auth-helpers-react";
-import A from "../../components/A";
-import Btn from "../../components/Button";
+import BenButton from "../../components/BenButton";
 // @ts-ignore
 import { Database } from '../utils/database.types'
 import { useRef, useState, useEffect } from 'react'
 import Modal from "../../components/Modal";
+import BenLink from "../../components/BenLink";
 
 
 export default function Gigs({ session }: { session: Session }) {
@@ -19,13 +19,14 @@ export default function Gigs({ session }: { session: Session }) {
 	const [loading, setLoading] = useState(true)
 	const [gigs, setGigs] = useState<any[]>()
 	const [venues, setVenues] = useState<any[]>()
+	const [clients, setClients] = useState<any[]>()
 
 	async function queryAllGigs() {
 		try {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('gigs')
-				.select(`id, is_paid, amount_due`)
+				.select(`id, is_paid, amount_due, start, venue`)
 				.order('id')
 
 			if (error && status !== 406) {
@@ -56,6 +57,28 @@ export default function Gigs({ session }: { session: Session }) {
 			}
 			if (data) {
 				setVenues(data)
+			}
+		} catch (error) {
+			// alert('Error loading user data!')
+			console.log(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	async function queryAllClients() {
+		try {
+			setLoading(true)
+			let { data, error, status } = await supabase
+				.from('clients')
+				.select(`id, name, email, phone`)
+				.order('name')
+
+			if (error && status !== 406) {
+				throw error
+			}
+			if (data) {
+				setClients(data)
 			}
 		} catch (error) {
 			// alert('Error loading user data!')
@@ -119,9 +142,11 @@ export default function Gigs({ session }: { session: Session }) {
 
 
 	useEffect(() => {
-		if (user) queryAllGigs()
+		if (user) {
+			queryAllGigs()
+			queryAllClients()
+		}
 		queryAllVenues()
-		console.log(venues);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user])
 
@@ -137,6 +162,8 @@ export default function Gigs({ session }: { session: Session }) {
 				<thead>
 					<tr className="bg-slate-200">
 						<th className="text-start w-20"><b>#</b></th>
+						<th className="text-start w-20"><b>Start</b></th>
+						<th className="text-start w-20"><b>Venue</b></th>
 						<th className="text-start w-40"><b>Amount Due</b></th>
 						<th className="text-start w-40"><b>Paid?</b></th>
 						<th className="text-start w-40"><b>Delete Gig</b></th>
@@ -145,13 +172,19 @@ export default function Gigs({ session }: { session: Session }) {
 				<tbody>
 					{gigs?.map((gig, i) => {
 
-						const { id, amount_due, is_paid } = gig
+						const { id, amount_due, is_paid, start, venue: venueId } = gig
+
+						const startDT = new Date(start)
+						const startTime = startDT.toLocaleString('en-US', { hour: 'numeric', hour12: true, minute: '2-digit' })
+						const startDate = startDT.toLocaleString('en-US', { dateStyle: "medium" })
 
 						return <tr key={id} className={i % 2 ? "bg-slate-200" : ""}>
 							<td className="">{id}</td>
+							<td className=""><p>{startDate}</p>{startTime}</td>
+							<td className="">{venues?.find((venue) => venue.id === venueId)?.name}</td>
 							<td className="">${amount_due}</td>
-							<td className="">{is_paid ? "✔️" : "𝙓"} <Btn loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /> </td>
-							<td className=""><Btn loading={loading} label={"X"} onClick={() => deleteGig(gig["id"])} /></td>
+							<td className="">{is_paid ? "Yes" : "No"} <BenButton loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /> </td>
+							<td className=""><BenButton loading={loading} label={"X"} onClick={() => deleteGig(gig["id"])} /></td>
 
 						</tr>
 					})}
@@ -162,15 +195,15 @@ export default function Gigs({ session }: { session: Session }) {
 
 
 		</section>
-		{/* <Btn label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
-		<Btn label="Add new gig(s)" onClick={() => setModalOpen(true)} />
-		<A href="/" label="go home" />
+		{/* <BenButton label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
+		<BenButton label="Add new gig" onClick={() => setModalOpen(true)} />
+		<BenLink href="/" label="go home" />
 
 
 
 	</div>
 
-		<Modal addNewGig={addNewGig} open={modalOpen} setOpen={setModalOpen} focusButtonRef={focusModalButtonRef} venues={venues} />
+		<Modal addNewGig={addNewGig} open={modalOpen} setOpen={setModalOpen} focusButtonRef={focusModalButtonRef} venues={venues} clients={clients} />
 
 
 	</>)

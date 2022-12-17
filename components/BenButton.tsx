@@ -1,12 +1,12 @@
 
-interface BtnProps {
+interface BenButtonProps {
 	label: string;
 	onClick: Function;
 	size?: "xs"
 	loading?: boolean
 }
 
-export default function Btn(props: BtnProps) {
+export default function BenButton(props: BenButtonProps) {
 
 	const sizeOverride = props.size ? "text-xs" : ""
 	const cursorOverride = props.loading ? "!cursor-wait" : ""

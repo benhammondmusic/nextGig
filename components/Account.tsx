@@ -4,8 +4,8 @@ import { useUser, useSupabaseClient, Session } from '@supabase/auth-helpers-reac
 import { Database } from '../utils/database.types'
 // import Avatar from './Avatar'
 import Link from 'next/link'
-import Button from './Button'
-import A from './A'
+import Button from './BenButton'
+import A from './BenLink'
 
 type Profiles = Database['public']['Tables']['profiles']['Row']
 
