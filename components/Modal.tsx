@@ -1,9 +1,36 @@
-import { Fragment, useRef, useState, useEffect } from 'react'
+import { Fragment, useRef, useState, useEffect, useReducer } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import Dropdown from './Dropdown';
+import BenButton from './BenButton';
+import { AddNewVenueForm } from './AddNewVenueForm';
 
 // https://tailwindui.com/components/application-ui/forms/input-groups
+
+
+function newGigReducer(state: any, action: any) {
+	switch (action.type) {
+		case 'update_field': {
+			return {
+				...state,
+				[action.fieldName]: action.fieldValue,
+			};
+		}
+	}
+	throw Error('Unknown action: ' + action.type);
+}
+
+const initialNewGigState = {
+	venueId: undefined,
+	clientId: undefined,
+	price: undefined,
+	startTime: undefined,
+	startDate: new Date().toISOString().slice(0, 10),
+	endTime: undefined,
+	endDate: undefined,
+	is_paid: false
+};
+
 
 interface ModalProps {
 	open: boolean;
@@ -12,32 +39,42 @@ interface ModalProps {
 	venues: any[] | undefined,
 	clients: any[] | undefined,
 	addNewGig: Function,
+	addNewVenue: Function
 }
 
 export default function Modal(props: ModalProps) {
 
+	const [newGigState, dispatchNewGig] = useReducer(newGigReducer, initialNewGigState);
 	const { open, setOpen, focusButtonRef } = props
-
-	const [newGigVenueId, setNewGigVenueId] = useState<number | null>(null)
-	const [newGigClientId, setNewGigClientId] = useState("")
-	const [newGigPrice, setNewGigPrice] = useState<number | null>(null)
-	const [newGigStartTime, setNewGigStartTime] = useState("")
-	const [newGigStartDate, setNewGigStartDate] = useState(new Date().toISOString().slice(0, 10))
-	const [newGigEndTime, setNewGigEndTime] = useState("")
-	const [newGigEndDate, setNewGigEndDate] = useState("")
+	const [showAddVenueForm, setShowAddVenueForm] = useState(false)
 
 	function handleSubmitNewGig() {
+
+		const { venueId, clientId, price, startTime, startDate, endTime, endDate } = newGigState
+
 		const newGigInfo = {
-			venue: newGigVenueId,
-			amount_due: newGigPrice,
-			start: newGigStartDate && newGigStartTime ? `${newGigStartDate}T${newGigStartTime}:00.000000+00:00` : null,
-			// newGigEndTime,
-			// newGigEndDate,
+			venue: venueId,
+			client: clientId,
+			amount_due: price,
+			start: startDate && startTime ? `${startDate}T${startTime}:00.000000+00:00` : null,
+			end: endDate && endTime ? `${endDate}T${endTime}:00.000000+00:00` : null,
 			is_paid: false
 		}
-
 		props.addNewGig(newGigInfo)
 		setOpen(false)
+	}
+
+	function handleAddNewVenue() {
+		setShowAddVenueForm(true)
+	}
+
+
+	function handleFieldUpdate(fieldName: string, fieldValue: any) {
+		dispatchNewGig({
+			type: 'update_field',
+			fieldName,
+			fieldValue
+		})
 	}
 
 
@@ -66,7 +103,7 @@ export default function Modal(props: ModalProps) {
 						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 					>
-						<Dialog.Panel className="relative transform rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+						<Dialog.Panel className="relative transform rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-7/12">
 							<div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 								<div className="sm:flex sm:items-start">
 									<div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
@@ -87,8 +124,8 @@ export default function Modal(props: ModalProps) {
 													<label htmlFor="start-date" className="block text-sm font-medium text-gray-700">Start date:</label>
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="date" id="start-date"
-														value={newGigStartDate}
-														onChange={(e) => setNewGigStartDate(e.target.value)}
+														value={newGigState.startDate}
+														onChange={(e) => handleFieldUpdate("startDate", e.target.value)}
 													/>
 												</div>
 												<div className="my-3 ">
@@ -96,8 +133,8 @@ export default function Modal(props: ModalProps) {
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="time" id="start-time"
 
-														value={newGigStartTime}
-														onChange={(e) => setNewGigStartTime(e.target.value)}
+														value={newGigState.startTime}
+														onChange={(e) => handleFieldUpdate("stateTime", e.target.value)}
 													/>
 												</div>
 											</div>
@@ -108,16 +145,16 @@ export default function Modal(props: ModalProps) {
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="date" id="end-date"
 
-														value={newGigEndDate}
-														onChange={(e) => setNewGigEndDate(e.target.value)}
+														value={newGigState.endDate}
+														onChange={(e) => handleFieldUpdate("endDate", e.target.value)}
 													/>
 												</div>
 												<div className="my-3 ">
 													<label htmlFor="end-time" className="block text-sm font-medium text-gray-700">End time:</label>
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="time" id="end-time"
-														value={newGigEndTime}
-														onChange={(e) => setNewGigEndTime(e.target.value)}
+														value={newGigState.endTime}
+														onChange={(e) => handleFieldUpdate("endTime", e.target.value)}
 													/>
 												</div>
 											</div>
@@ -130,24 +167,17 @@ export default function Modal(props: ModalProps) {
 														<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 															<span className="text-gray-500 sm:text-sm">$</span>
 														</div>
-														<datalist id="prices">
-															<option value={100} />
-															<option value={200} />
-															<option value={300} />
-															<option value={400} />
-															<option value={500} />
-															<option value={1000} />
-															<option value={1500} />
-															<option value={2000} />
-														</datalist>
+
 														<input
 															type="number"
-															list={"prices"}
+
 															id="price"
 															className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 															placeholder="100"
-															value={newGigPrice ?? ""}
-															onChange={(e) => setNewGigPrice(parseInt(e.target.value))}
+															value={newGigState.price ?? ""}
+															onChange={(e) => handleFieldUpdate("price", parseInt(e.target.value))}
+
+														// setNewGigPrice(parseInt(e.target.value))
 														/>
 
 													</div>
@@ -172,12 +202,38 @@ export default function Modal(props: ModalProps) {
 															onChange={(e) => setNewGigVenueId(props.venues?.find((venue) => venue["name"] === e.target.value))}
 														/> */}
 
-														<Dropdown
-															id="venue"
-															menuItems={props.venues || []}
-															selectedItem={newGigVenueId}
-															setSelectedItem={setNewGigVenueId}
-														/>
+
+
+
+														{showAddVenueForm ? <>
+															<AddNewVenueForm
+																addNewVenue={props.addNewVenue} setShowAddVenueForm={setShowAddVenueForm}
+																handleFieldUpdate={handleFieldUpdate}
+															/>
+															<span className="mx-3">or</span>
+															<BenButton
+																label="Choose existing venue"
+																onClick={() => setShowAddVenueForm(false)}
+															/>
+														</>
+															: <>
+																<Dropdown
+																	id="venue"
+																	menuItems={props.venues || []}
+																	selectedItem={newGigState.venueId}
+																	setSelectedItem={(venueId: number) => handleFieldUpdate("venueId", venueId)}
+																/>
+																<span className="mx-3">or</span>
+																<BenButton
+																	label="Create new venue"
+																	onClick={() => handleAddNewVenue()}
+																/>
+															</>
+														}
+
+
+
+
 
 													</div>
 												</div>
@@ -197,8 +253,8 @@ export default function Modal(props: ModalProps) {
 															list={"clients"}
 															id="client"
 															className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-															value={newGigClientId}
-															onChange={(e) => setNewGigClientId(e.target.value)}
+															value={newGigState.clientId}
+															onChange={(e) => handleFieldUpdate("clientId", e.target.value)}
 														/>
 
 													</div>

@@ -14,7 +14,7 @@ export default function BenButton(props: BenButtonProps) {
 
 	return <button
 		disabled={props.loading}
-		className={`bg-slate-800 text-slate-50 p-2 rounded-md m-2 ${cursorOverride} ${sizeOverride}`}
+		className={`bg-slate-800 text-slate-50 p-2 rounded-md my-2 ${cursorOverride} ${sizeOverride}`}
 		onClick={() => props.onClick()}
 	>{props.label}</button>
 }

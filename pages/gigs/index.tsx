@@ -108,6 +108,30 @@ export default function Gigs({ session }: { session: Session }) {
 		}
 	}
 
+	async function addNewVenue(venueInfo: any) {
+
+		let resp
+		try {
+			setLoading(true)
+			const { data, error } = await supabase
+				.from('venues')
+				.insert([venueInfo])
+				.select()
+
+			resp = data?.[0]
+		}
+
+
+		catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+			queryAllGigs()
+			queryAllVenues()
+			return resp
+		}
+	}
+
 	async function updateGigIsPaid(id: number, isPaid: boolean) {
 		try {
 			setLoading(true)
@@ -195,15 +219,18 @@ export default function Gigs({ session }: { session: Session }) {
 
 
 		</section>
-		{/* <BenButton label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
-		<BenButton label="Add new gig" onClick={() => setModalOpen(true)} />
-		<BenLink href="/" label="go home" />
 
+
+		<menu className="m-12">
+			{/* <BenButton label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
+			<BenButton label="Add new gig" onClick={() => setModalOpen(true)} />
+			<BenLink href="/" label="go home" />
+		</menu>
 
 
 	</div>
 
-		<Modal addNewGig={addNewGig} open={modalOpen} setOpen={setModalOpen} focusButtonRef={focusModalButtonRef} venues={venues} clients={clients} />
+		<Modal addNewGig={addNewGig} addNewVenue={addNewVenue} open={modalOpen} setOpen={setModalOpen} focusButtonRef={focusModalButtonRef} venues={venues} clients={clients} />
 
 
 	</>)

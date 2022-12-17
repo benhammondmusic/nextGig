@@ -6,6 +6,8 @@ import { Database } from '../utils/database.types'
 import Link from 'next/link'
 import Button from './BenButton'
 import A from './BenLink'
+import BenButton from './BenButton'
+import BenLink from './BenLink'
 
 type Profiles = Database['public']['Tables']['profiles']['Row']
 
@@ -81,19 +83,13 @@ export default function Account({ session }: { session: Session }) {
 				<label htmlFor="email">🎼</label>
 				<input className="font-thin w-30" id="email" type="text" value={session.user.email} size={email.length + 2} disabled />
 			</div>
-			<div>
-				<Button
-					onClick={() => updateProfile({ avatar_url })}
-					disabled={loading}
-					label={loading ? 'Loading ...' : 'Update'}
-				/>
-			</div>
 
-			<A href="/gigs" label={"view gigs"} />
+
+			<BenLink href="/gigs" label={"view gigs"} />
 
 
 			<div>
-				<Button onClick={() => supabase.auth.signOut()} label={"Sign Out"} />
+				<BenButton onClick={() => supabase.auth.signOut()} label={"Sign Out"} />
 
 			</div>
 		</div>
