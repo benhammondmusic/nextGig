@@ -5,6 +5,7 @@ import Dropdown from './Dropdown';
 import BenButton from './BenButton';
 import { AddNewVenueForm } from './AddNewVenueForm';
 import { AddNewClientForm } from './AddNewClientForm';
+import { start } from 'repl';
 
 // https://tailwindui.com/components/application-ui/forms/input-groups
 
@@ -14,6 +15,9 @@ function newGigReducer(state: any, action: any) {
 	console.log(state);
 
 	switch (action.type) {
+		case 'reset_state': {
+			return initialNewGigState
+		}
 		case 'update_field': {
 			return {
 				...state,
@@ -28,15 +32,15 @@ const initialNewGigState = {
 	venueId: null,
 	clientId: null,
 	price: null,
-	startTime: "",
-	startDate: "",
-	endTime: "",
-	endDate: "",
+	startTime: null,
+	startDate: null,
+	endTime: null,
+	endDate: null,
 	is_paid: false
 };
 
 
-interface ModalProps {
+interface AddGigModalProps {
 	open: boolean;
 	setOpen: (value: boolean) => void;
 	focusButtonRef: any
@@ -47,7 +51,7 @@ interface ModalProps {
 	addNewClient: Function,
 }
 
-export default function Modal(props: ModalProps) {
+export default function AddGigModal(props: AddGigModalProps) {
 
 	const [newGigState, dispatchNewGig] = useReducer(newGigReducer, initialNewGigState);
 	const { open, setOpen, focusButtonRef } = props
@@ -58,15 +62,20 @@ export default function Modal(props: ModalProps) {
 
 		const { venueId, clientId, price, startTime, startDate, endTime, endDate } = newGigState
 
+
 		const newGigInfo = {
 			venue: venueId,
 			client: clientId,
 			amount_due: price,
-			start: startDate && startTime ? `${startDate}T${startTime}:00.000000+00:00` : undefined,
-			end: endDate && endTime ? `${endDate}T${endTime}:00.000000+00:00` : null,
+			start_date: startDate,
+			start_time: startTime,
+			end_date: endDate,
+			end_time: endTime,
 			is_paid: false
 		}
 		props.addNewGig(newGigInfo)
+		resetNewGigState()
+
 		setOpen(false)
 	}
 
@@ -77,6 +86,10 @@ export default function Modal(props: ModalProps) {
 
 	function handleAddNewClient() {
 		setShowAddClientForm(true)
+	}
+
+	function resetNewGigState() {
+		dispatchNewGig({ type: 'reset_state' })
 	}
 
 	function handleFieldUpdate(fieldName: string, fieldValue: any) {
@@ -134,7 +147,7 @@ export default function Modal(props: ModalProps) {
 													<label htmlFor="start-date" className="block text-sm font-medium text-gray-700">Start date:</label>
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="date" id="start-date"
-														value={newGigState.startDate}
+														value={newGigState.startDate ?? ""}
 														onChange={(e) => handleFieldUpdate("startDate", new Date(e.target.value).toISOString().slice(0, 10))}
 													/>
 												</div>
@@ -143,7 +156,7 @@ export default function Modal(props: ModalProps) {
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="time" id="start-time"
 
-														value={newGigState.startTime}
+														value={newGigState.startTime ?? ""}
 														onChange={(e) => handleFieldUpdate("startTime", e.target.value)}
 													/>
 												</div>
@@ -155,7 +168,7 @@ export default function Modal(props: ModalProps) {
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="date" id="end-date"
 
-														value={newGigState.endDate}
+														value={newGigState.endDate ?? ""}
 														onChange={(e) => handleFieldUpdate("endDate", e.target.value)}
 													/>
 												</div>
@@ -163,7 +176,7 @@ export default function Modal(props: ModalProps) {
 													<label htmlFor="end-time" className="block text-sm font-medium text-gray-700">End time:</label>
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="time" id="end-time"
-														value={newGigState.endTime}
+														value={newGigState.endTime ?? ""}
 														onChange={(e) => handleFieldUpdate("endTime", e.target.value)}
 													/>
 												</div>

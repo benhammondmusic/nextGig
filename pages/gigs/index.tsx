@@ -3,8 +3,8 @@ import BenButton from "../../components/BenButton";
 // @ts-ignore
 import { Database } from '../utils/database.types'
 import { useRef, useState, useEffect } from 'react'
-import Modal from "../../components/Modal";
 import BenLink from "../../components/BenLink";
+import AddGigModal from "../../components/AddGigModal";
 
 
 export default function Gigs({ session }: { session: Session }) {
@@ -12,7 +12,6 @@ export default function Gigs({ session }: { session: Session }) {
 	// modal
 	const focusModalButtonRef = useRef(null)
 	const [modalOpen, setModalOpen] = useState(false)
-
 	const supabase = useSupabaseClient<Database>()
 	const user = useUser()
 	const [loading, setLoading] = useState(true)
@@ -25,8 +24,8 @@ export default function Gigs({ session }: { session: Session }) {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('gigs')
-				.select(`id, is_paid, amount_due, start, end, venue, client`)
-				.order('start')
+				.select(`id, is_paid, amount_due, start_date, end_date, start_time, end_time, venue, client`)
+				.order('start_date')
 
 			if (error && status !== 406) {
 				throw error
@@ -101,6 +100,7 @@ export default function Gigs({ session }: { session: Session }) {
 		catch (error) {
 			console.log(error)
 		} finally {
+
 			setLoading(false)
 			queryAllGigs()
 		}
@@ -194,81 +194,104 @@ export default function Gigs({ session }: { session: Session }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user])
 
-	return (<><div className={loading ? "!cursor-wait" : ""}>
+	return (
+		<>
+			<div className={loading ? "!cursor-wait" : ""}>
+
+				<h1 className="text-3xl my-2">Gigs!</h1>
+
+				<section className="bg-slate-300 m-5 w-fit">
+
+					<table className="table-auto">
+						<thead>
+							<tr className="bg-slate-200">
+								<th className="text-start w-20"><b>#</b></th>
+								<th className="text-start w-20"><b>Start</b></th>
+								<th className="text-start w-20"><b>End</b></th>
+								<th className="text-start w-20"><b>Venue</b></th>
+								<th className="text-start w-40"><b>Amount Due</b></th>
+								<th className="text-start w-40"><b>Paid?</b></th>
+								<th className="text-start w-40"><b>Delete Gig</b></th>
+								<th className="text-start w-40"><b>Client</b></th>
+							</tr>
+						</thead>
+						<tbody>
+							{gigs?.map((gig, i) => {
+
+								const { id, amount_due, is_paid, venue: venueId, client: clientId } = gig
+
+								const { startDate, startTime, endDate, endTime } = getDisplayDatesTimes(gig)
 
 
 
-		<h1 className="text-3xl my-2">Gigs!</h1>
-
-		<section className="bg-slate-300 m-5 w-fit">
-
-			<table className="table-auto">
-				<thead>
-					<tr className="bg-slate-200">
-						<th className="text-start w-20"><b>#</b></th>
-						<th className="text-start w-20"><b>Start</b></th>
-						<th className="text-start w-20"><b>Venue</b></th>
-						<th className="text-start w-40"><b>Amount Due</b></th>
-						<th className="text-start w-40"><b>Paid?</b></th>
-						<th className="text-start w-40"><b>Delete Gig</b></th>
-						<th className="text-start w-40"><b>Client</b></th>
-					</tr>
-				</thead>
-				<tbody>
-					{gigs?.map((gig, i) => {
-
-						const { id, amount_due, is_paid, start, venue: venueId, client: clientId } = gig
-
-						const startDT = new Date(start)
-						const startTime = startDT.toLocaleString('en-US', { hour: 'numeric', hour12: true, minute: '2-digit' })
-						const startDate = startDT.toLocaleString('en-US', { dateStyle: "medium" })
-
-						return <tr key={id} className={i % 2 ? "bg-slate-200" : ""}>
-							<td className="">{id}</td>
-							<td className=""><p>{startDate}</p>{startTime}</td>
-							<td className="">{venues?.find((venue) => venue.id === venueId)?.name}</td>
-							<td className="">${amount_due}</td>
-							<td className="">{is_paid ? "Yes" : "No"} <BenButton loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /> </td>
-							<td className=""><BenButton loading={loading} label={"X"} onClick={() => deleteGig(gig["id"])} /></td>
-							<td className="">{clients?.find((client) => client.id === clientId)?.name}</td>
-
-						</tr>
-					})}
-
-				</tbody>
-
-			</table>
 
 
-		</section>
+
+								return <tr key={id} className={i % 2 ? "bg-slate-200" : ""}>
+									<td className="">{id}</td>
+									<td className=""><p>{startDate}</p>{startTime}</td>
+									<td className=""><p>{endDate}</p>{endTime}</td>
+									<td className="">{venues?.find((venue) => venue.id === venueId)?.name}</td>
+									<td className="">${amount_due}</td>
+									<td className="">{is_paid ? "Yes" : "No"} <BenButton loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /> </td>
+									<td className=""><BenButton loading={loading} label={"X"} onClick={() => deleteGig(gig["id"])} /></td>
+									<td className="">{clients?.find((client) => client.id === clientId)?.name}</td>
+
+								</tr>
+							})}
+
+						</tbody>
+
+					</table>
 
 
-		<menu className="m-12">
-			{/* <BenButton label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
-			<BenButton label="Add new gig" onClick={() => setModalOpen(true)} />
-			<BenLink href="/" label="go home" />
-		</menu>
+				</section>
 
 
-	</div>
-
-		<Modal
-			addNewGig={addNewGig}
-			addNewVenue={addNewVenue}
-			addNewClient={addNewClient}
-			open={modalOpen}
-			setOpen={setModalOpen}
-			focusButtonRef={focusModalButtonRef}
-			venues={venues}
-			clients={clients}
-		/>
+				<menu className="m-12">
+					{/* <BenButton label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
+					<BenButton label="Add new gig" onClick={() => setModalOpen(true)} />
+					<BenLink href="/" label="go home" />
+				</menu>
 
 
-	</>)
+			</div>
+
+			<AddGigModal
+				addNewGig={addNewGig}
+				addNewVenue={addNewVenue}
+				addNewClient={addNewClient}
+				open={modalOpen}
+				setOpen={setModalOpen}
+				focusButtonRef={focusModalButtonRef}
+				venues={venues}
+				clients={clients}
+			/>
+
+
+		</>)
 
 }
 
 
+
+
+function getDisplayDatesTimes(gig: any) {
+	const { start_date, end_date, start_time, end_time } = gig
+
+	const startDateDT: Date | null = start_date ? new Date(start_date) : null
+	const startDate = startDateDT?.toLocaleDateString('en-US', { dateStyle: "medium" }) ?? "(Date TBD)"
+	const startDateForStartTimeAs_YYYY_MM_DD = startDateDT ? startDateDT.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
+	const startTime = start_time ? new Date(startDateForStartTimeAs_YYYY_MM_DD + "T" + start_time).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true, minute: '2-digit' }) : "(Start time TBD)"
+
+	const endDateDT: Date | null = end_date ? new Date(end_date) : null
+	const endDate = endDateDT?.toLocaleDateString('en-US', { dateStyle: "medium" }) ?? ""
+	const endDateForStartTimeAs_YYYY_MM_DD = endDateDT ? endDateDT.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
+	const endTime = end_time ? new Date(endDateForStartTimeAs_YYYY_MM_DD + "T" + end_time).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true, minute: '2-digit' }) : "(End time TBD)"
+
+	return { startDate, startTime, endDate, endTime }
+
+}
 
 
 
