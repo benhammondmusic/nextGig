@@ -14,6 +14,7 @@ function newGigReducer(state: any, action: any) {
 
 	console.log(state);
 
+
 	switch (action.type) {
 		case 'reset_state': {
 			return initialNewGigState
@@ -36,7 +37,7 @@ const initialNewGigState = {
 	startDate: null,
 	endTime: null,
 	endDate: null,
-	is_paid: false
+	isPaid: false
 };
 
 
@@ -142,13 +143,94 @@ export default function AddGigModal(props: AddGigModalProps) {
 											<p className="text-sm text-gray-500">
 												Most fields are optional; you can fill in more details later.
 											</p>
+
+											<div className="flex">
+												<div className="my-3 mr-3">
+													{!showAddVenueForm && <label htmlFor="venue" className="block text-sm font-medium text-gray-700">
+														Location
+													</label>}
+													<div className="relative mt-1 rounded-md shadow-sm">
+
+														{showAddVenueForm ? <>
+															<AddNewVenueForm
+																addNewVenue={props.addNewVenue} setShowAddVenueForm={setShowAddVenueForm}
+																handleFieldUpdate={handleFieldUpdate}
+															/>
+															<span className="mx-3">or</span>
+															<BenButton
+																label="go back to venue list"
+																onClick={() => setShowAddVenueForm(false)}
+																styleAsLink={true}
+															/>
+														</>
+															: <>
+																<Dropdown
+																	id="venue"
+																	menuItems={props.venues || []}
+																	selectedItemId={newGigState.venueId}
+																	setSelectedItemId={(venueId: number) => handleFieldUpdate("venueId", venueId)}
+																/>
+																<span className="mx-3">or</span>
+																<BenButton
+																	label="Create new venue"
+																	onClick={() => handleAddNewVenue()}
+																/>
+															</>
+														}
+
+													</div>
+												</div>
+											</div>
+
+											<div className="flex">
+												<div className="my-3 mr-3">
+													{!showAddClientForm && <label htmlFor="client" className="block text-sm font-medium text-gray-700">
+														Client
+													</label>}
+													<div className="relative mt-1 rounded-md shadow-sm">
+
+
+														{showAddClientForm ? <>
+															<AddNewClientForm
+																addNewClient={props.addNewClient} setShowAddClientForm={setShowAddClientForm}
+																handleFieldUpdate={handleFieldUpdate}
+															/>
+															<span className="mx-3">or</span>
+															<BenButton
+																label="go back to client list"
+																onClick={() => setShowAddClientForm(false)}
+																styleAsLink={true}
+															/>
+														</>
+															: <>
+																<Dropdown
+																	id="client"
+																	menuItems={props.clients || []}
+																	selectedItemId={newGigState.clientId}
+																	setSelectedItemId={(clientId: number) => handleFieldUpdate("clientId", clientId)}
+																/>
+																<span className="mx-3">or</span>
+																<BenButton
+																	label="Create new client"
+																	onClick={() => handleAddNewClient()}
+																/>
+															</>
+														}
+
+
+
+
+													</div>
+												</div>
+											</div>
+
 											<div className="flex">
 												<div className="my-3 mr-3">
 													<label htmlFor="start-date" className="block text-sm font-medium text-gray-700">Start date:</label>
 
 													<input className='block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' type="date" id="start-date"
 														value={newGigState.startDate ?? ""}
-														onChange={(e) => handleFieldUpdate("startDate", new Date(e.target.value).toISOString().slice(0, 10))}
+														onChange={(e) => handleFieldUpdate("startDate", e.target.value)}
 													/>
 												</div>
 												<div className="my-3 ">
@@ -207,85 +289,6 @@ export default function AddGigModal(props: AddGigModalProps) {
 												</div>
 											</div>
 
-											<div className="flex">
-												<div className="my-3 mr-3">
-													<label htmlFor="venue" className="block text-sm font-medium text-gray-700">
-														Location
-													</label>
-													<div className="relative mt-1 rounded-md shadow-sm">
-
-														{showAddVenueForm ? <>
-															<AddNewVenueForm
-																addNewVenue={props.addNewVenue} setShowAddVenueForm={setShowAddVenueForm}
-																handleFieldUpdate={handleFieldUpdate}
-															/>
-															<span className="mx-3">or</span>
-															<BenButton
-																label="Choose existing venue"
-																onClick={() => setShowAddVenueForm(false)}
-															/>
-														</>
-															: <>
-																<Dropdown
-																	id="venue"
-																	menuItems={props.venues || []}
-																	selectedItem={newGigState.venueId}
-																	setSelectedItem={(venueId: number) => handleFieldUpdate("venueId", venueId)}
-																/>
-																<span className="mx-3">or</span>
-																<BenButton
-																	label="Create new venue"
-																	onClick={() => handleAddNewVenue()}
-																/>
-															</>
-														}
-
-													</div>
-												</div>
-											</div>
-
-											<div className="flex">
-												<div className="my-3 mr-3">
-													<label htmlFor="client" className="block text-sm font-medium text-gray-700">
-														Client
-													</label>
-													<div className="relative mt-1 rounded-md shadow-sm">
-
-
-														{showAddClientForm ? <>
-															<AddNewClientForm
-																addNewClient={props.addNewClient} setShowAddClientForm={setShowAddClientForm}
-																handleFieldUpdate={handleFieldUpdate}
-															/>
-															<span className="mx-3">or</span>
-															<BenButton
-																label="Choose existing client"
-																onClick={() => setShowAddClientForm(false)}
-															/>
-														</>
-															: <>
-																<Dropdown
-																	id="client"
-																	menuItems={props.clients || []}
-																	selectedItem={newGigState.clientId}
-																	setSelectedItem={(clientId: number) => handleFieldUpdate("clientId", clientId)}
-																/>
-																<span className="mx-3">or</span>
-																<BenButton
-																	label="Create new client"
-																	onClick={() => handleAddNewClient()}
-																/>
-															</>
-														}
-
-
-
-
-													</div>
-												</div>
-											</div>
-
-
 										</div>
 									</div>
 								</div>
@@ -296,8 +299,9 @@ export default function AddGigModal(props: AddGigModalProps) {
 									className="inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
 									onClick={() => handleSubmitNewGig()}
 									ref={focusButtonRef}
+									disabled={showAddVenueForm || showAddClientForm}
 								>
-									Submit
+									Submit Gig
 								</button>
 								<button
 									type="button"

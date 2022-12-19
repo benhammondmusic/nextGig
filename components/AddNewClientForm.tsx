@@ -99,7 +99,9 @@ export function AddNewClientForm(props: AddNewClientFormProps) {
 				</div>
 			</div>
 		</div>
-		<BenButton label="Create new client" onClick={handleSubmitNewClient} />
+		{(newClientName || newClientEmail) &&
+			<BenButton label="Submit new client" onClick={handleSubmitNewClient} />
+		}
 	</>
 
 

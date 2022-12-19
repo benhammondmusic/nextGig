@@ -8,6 +8,7 @@ import Button from './BenButton'
 import A from './BenLink'
 import BenButton from './BenButton'
 import BenLink from './BenLink'
+import dayjs from 'dayjs'
 
 type Profiles = Database['public']['Tables']['profiles']['Row']
 
@@ -61,7 +62,7 @@ export default function Account({ session }: { session: Session }) {
 			const updates = {
 				id: user.id,
 				avatar_url,
-				updated_at: new Date().toISOString(),
+				updated_at: dayjs().toISOString(),
 			}
 
 			let { error } = await supabase.from('profiles').upsert(updates)

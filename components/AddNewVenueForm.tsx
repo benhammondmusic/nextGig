@@ -12,9 +12,7 @@ export function AddNewVenueForm(props: AddNewVenueFormProps) {
 	const [newVenueName, setNewVenueName] = useState("")
 	const [newVenueAddress, setNewVenueAddress] = useState("")
 
-	useEffect(() => {
-		console.log(newVenueAddress);
-	}, [newVenueAddress])
+
 
 	async function handleSubmitNewVenue() {
 		const newVenueInfo = {
@@ -66,7 +64,11 @@ export function AddNewVenueForm(props: AddNewVenueFormProps) {
 				</div>
 			</div>
 		</div>
-		<BenButton label="Create new venue" onClick={handleSubmitNewVenue} />
+		{(newVenueName || newVenueAddress) && <BenButton
+			label="Submit this venue"
+			onClick={handleSubmitNewVenue}
+
+		/>}
 	</>
 
 

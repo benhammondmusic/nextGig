@@ -5,6 +5,9 @@ import { Database } from '../utils/database.types'
 import { useRef, useState, useEffect } from 'react'
 import BenLink from "../../components/BenLink";
 import AddGigModal from "../../components/AddGigModal";
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 
 
 export default function Gigs({ session }: { session: Session }) {
@@ -18,6 +21,9 @@ export default function Gigs({ session }: { session: Session }) {
 	const [gigs, setGigs] = useState<any[]>()
 	const [venues, setVenues] = useState<any[]>()
 	const [clients, setClients] = useState<any[]>()
+
+	useEffect(() => console.log(venues))
+
 
 	async function queryAllGigs() {
 		try {
@@ -138,8 +144,8 @@ export default function Gigs({ session }: { session: Session }) {
 				.from('clients')
 				.insert([clientInfo])
 				.select()
-
 			resp = data?.[0]
+			console.log({ resp });
 		}
 
 
@@ -185,6 +191,8 @@ export default function Gigs({ session }: { session: Session }) {
 	}
 
 
+
+
 	useEffect(() => {
 		if (user) {
 			queryAllGigs()
@@ -221,11 +229,6 @@ export default function Gigs({ session }: { session: Session }) {
 								const { id, amount_due, is_paid, venue: venueId, client: clientId } = gig
 
 								const { startDate, startTime, endDate, endTime } = getDisplayDatesTimes(gig)
-
-
-
-
-
 
 								return <tr key={id} className={i % 2 ? "bg-slate-200" : ""}>
 									<td className="">{id}</td>
@@ -279,15 +282,23 @@ export default function Gigs({ session }: { session: Session }) {
 function getDisplayDatesTimes(gig: any) {
 	const { start_date, end_date, start_time, end_time } = gig
 
-	const startDateDT: Date | null = start_date ? new Date(start_date) : null
-	const startDate = startDateDT?.toLocaleDateString('en-US', { dateStyle: "medium" }) ?? "(Date TBD)"
-	const startDateForStartTimeAs_YYYY_MM_DD = startDateDT ? startDateDT.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
-	const startTime = start_time ? new Date(startDateForStartTimeAs_YYYY_MM_DD + "T" + start_time).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true, minute: '2-digit' }) : "(Start time TBD)"
+	dayjs.extend(localizedFormat)
+	dayjs.extend(customParseFormat)
 
-	const endDateDT: Date | null = end_date ? new Date(end_date) : null
-	const endDate = endDateDT?.toLocaleDateString('en-US', { dateStyle: "medium" }) ?? ""
-	const endDateForStartTimeAs_YYYY_MM_DD = endDateDT ? endDateDT.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
-	const endTime = end_time ? new Date(endDateForStartTimeAs_YYYY_MM_DD + "T" + end_time).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true, minute: '2-digit' }) : "(End time TBD)"
+	const startDate = start_date ? dayjs(start_date).format('MMMD') : "?"
+
+	const startTimeDJS = dayjs(start_time, "HH:mm:ss")
+	const startTimeIsOnTheHour = startTimeDJS.minute() === 0
+	const startTimeDisplayFormat = `h${startTimeIsOnTheHour ? "" : ":mm"}a`
+	const startTime = start_time ? dayjs(start_time, "HH:mm:ss").format(startTimeDisplayFormat) : ""
+
+	const endDate = end_date ? dayjs(end_date).format('MMMD') : ""
+
+	const endTimeDJS = dayjs(end_time, "HH:mm:ss")
+	const endTimeIsOnTheHour = endTimeDJS.minute() === 0
+	const endTimeDisplayFormat = `h${endTimeIsOnTheHour ? "" : ":mm"}a`
+	const endTime = end_time ? dayjs(end_time, "HH:mm:ss").format(endTimeDisplayFormat) : ""
+
 
 	return { startDate, startTime, endDate, endTime }
 
