@@ -7,13 +7,17 @@ from [benhammond.tech](https://benhammond.tech)
 
 ## To Do:
 - [x] basic auth for supabase
-- [ ] C
-- [x] R
-- [ ] U
-- [ ] D
+- [x] basic crud for supabase
 - [x] add tailwind
-- [ ] use tailwind
-- [ ] fill in schema / real gig, venue, client fields
+- [x] use tailwind
+- [x] fill in schema / real gig, venue, client fields
+- [ ] setup github action to generate ts types from db
+- [ ] add venues management page
+- [ ] add clients management page
+- [ ] invoicing
+- [ ] actually emailing clients from the app? 
+- [ ] syncing gigs to user google cal
+- [ ] 
 
 
 
