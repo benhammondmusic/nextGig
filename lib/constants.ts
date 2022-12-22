@@ -1,0 +1,1 @@
+export const LOCKED = 999

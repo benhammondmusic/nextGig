@@ -19,8 +19,8 @@ export default function Dropdown(props: DropdownProps) {
 
 
 
-	const tbdItem = props.menuItems?.find((item) => item.id === 999)
-	const menuItems = props.menuItems?.filter((item) => item.id !== 999)
+	const tbdItem = props.menuItems?.find((item) => item.id === LOCKED)
+	const menuItems = props.menuItems?.filter((item) => item.id !== LOCKED)
 
 	const defaultLabel = `Choose existing ${props.id}`
 	const selectedItemName = menuItems.find((item) => item.id === props.selectedItemId)?.name

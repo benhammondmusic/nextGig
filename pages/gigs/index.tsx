@@ -8,6 +8,7 @@ import AddGigModal from "../../components/AddGigModal";
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import { DeleteButton } from "../../components/DeleteButton";
 
 
 export default function Gigs({ session }: { session: Session }) {
@@ -237,7 +238,9 @@ export default function Gigs({ session }: { session: Session }) {
 									<td className="">{venues?.find((venue) => venue.id === venueId)?.name}</td>
 									<td className="">${amount_due}</td>
 									<td className="">{is_paid ? "Yes" : "No"} <BenButton loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /> </td>
-									<td className=""><BenButton loading={loading} label={"X"} onClick={() => deleteGig(gig["id"])} /></td>
+									<td className="">
+										<DeleteButton loading={loading} handleClick={() => deleteGig(id)} />
+									</td>
 									<td className="">{clients?.find((client) => client.id === clientId)?.name}</td>
 
 								</tr>
@@ -254,7 +257,9 @@ export default function Gigs({ session }: { session: Session }) {
 				<menu className="m-12">
 					{/* <BenButton label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
 					<BenButton label="Add new gig" onClick={() => setModalOpen(true)} />
-					<BenLink href="/" label="go home" />
+					<BenLink href="/" label="Go Home" />
+					<BenLink href="/venues" label="View Venues" />
+					<BenLink href="/clients" label="View Clients" />
 				</menu>
 
 
