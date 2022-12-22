@@ -16,19 +16,12 @@ interface DropdownProps {
 
 export default function Dropdown(props: DropdownProps) {
 
-	useEffect(() => console.log(props.selectedItemId))
-
-
-
 	const tbdItem = props.menuItems?.find((item) => item.id === LOCKED)
 	const menuItems = props.menuItems?.filter((item) => item.id !== LOCKED)
 
 	const defaultLabel = `Choose existing ${props.id}`
 	const selectedItemName = menuItems.find((item) => item.id === props.selectedItemId)?.name
 	const tbdItemName = props.selectedItemId === tbdItem.id ? tbdItem.name : ""
-
-
-
 
 	return (
 		<Menu as="div" className="relative inline-block text-left" id={props.id}>
