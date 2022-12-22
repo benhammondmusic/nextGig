@@ -4,7 +4,8 @@
     "heroicons",
     "lyqht",
     "MMMD",
-    "Supa"
+    "Supa",
+    "tailwindui"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,

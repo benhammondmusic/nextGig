@@ -207,8 +207,6 @@ export default function Gigs({ session }: { session: Session }) {
 		<>
 			<div className={loading ? "!cursor-wait" : ""}>
 
-				<h1 className="text-3xl my-2">Gigs!</h1>
-
 				<section className="bg-slate-300 m-5 w-fit">
 
 					<table className="table-auto">
@@ -257,7 +255,6 @@ export default function Gigs({ session }: { session: Session }) {
 				<menu className="m-12">
 					{/* <BenButton label="Add sample gig" onClick={() => addNewGig()} loading={loading} /> */}
 					<BenButton label="Add new gig" onClick={() => setModalOpen(true)} />
-					<BenLink href="/" label="Go Home" />
 					<BenLink href="/venues" label="View Venues" />
 					<BenLink href="/clients" label="View Clients" />
 				</menu>

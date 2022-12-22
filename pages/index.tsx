@@ -1,6 +1,7 @@
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Account from '../components/Account'
+import Gigs from './gigs'
 
 const Home = () => {
   const session = useSession()
@@ -13,7 +14,7 @@ const Home = () => {
           <Auth supabaseClient={supabase} />
         </div>
       ) : (
-        <Account session={session} />
+        <Gigs session={session} />
       )}
     </div>
   )

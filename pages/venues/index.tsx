@@ -82,7 +82,6 @@ export default function Gigs({ session }: { session: Session }) {
 	return (
 		<>
 			<div className={loading ? "!cursor-wait" : ""}>
-				<h1 className="text-3xl my-2">Venues!</h1>
 				<ul>
 					{venues?.map((venue) => {
 						const { name, address, id } = venue

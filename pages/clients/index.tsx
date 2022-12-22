@@ -81,7 +81,6 @@ export default function Venues({ session }: { session: Session }) {
 	return (
 		<>
 			<div className={loading ? "!cursor-wait" : ""}>
-				<h1 className="text-3xl my-2">Clients!</h1>
 				<ul>
 					{clients?.map((client) => {
 						const { name, email, phone, address, id } = client
