@@ -16,7 +16,7 @@ from [benhammond.tech](https://benhammond.tech)
 - [x] add clients management page
 - [ ] allow inline editing of gigs/clients/venues
 - [ ] invoicing
-- [ ] actually emailing clients from the app? 
+- [ ] actually emailing clients from the app?
 - [ ] syncing gigs to user google cal
 - [ ] figure out cascade delete; what to do when deleting a client that has foreign key related gigs
 
