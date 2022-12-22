@@ -12,12 +12,13 @@ from [benhammond.tech](https://benhammond.tech)
 - [x] use tailwind
 - [x] fill in schema / real gig, venue, client fields
 - [ ] setup github action to generate ts types from db
-- [ ] add venues management page
-- [ ] add clients management page
+- [x] add venues management page
+- [x] add clients management page
+- [ ] allow inline editing of gigs/clients/venues
 - [ ] invoicing
 - [ ] actually emailing clients from the app? 
 - [ ] syncing gigs to user google cal
-- [ ] 
+- [ ] figure out cascade delete; what to do when deleting a client that has foreign key related gigs
 
 
 
