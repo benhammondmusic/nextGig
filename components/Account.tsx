@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient, Session } from '@supabase/auth-helpers-react'
-// @ts-ignore
-import { Database } from '../utils/database.types'
+import { Database } from "../db.types"
 // import Avatar from './Avatar'
 import Link from 'next/link'
 import Button from './BenButton'

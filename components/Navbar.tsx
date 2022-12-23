@@ -3,8 +3,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import { useUser, useSupabaseClient, Session } from '@supabase/auth-helpers-react'
-// @ts-ignore
-import { Database } from '../utils/database.types'
+import { Database } from "../db.types"
 // import Avatar from './Avatar'
 import { useRouter } from "next/router";
 

@@ -4,8 +4,7 @@ import { AddNewClientForm } from "../../components/AddNewClientForm";
 import BenLink from "../../components/BenLink";
 import { DeleteButton } from "../../components/DeleteButton";
 import { LOCKED } from "../../lib/constants";
-// @ts-ignore
-import { Database } from '../utils/database.types'
+import { Database } from "../../db.types"
 
 export default function Venues({ session }: { session: Session }) {
 

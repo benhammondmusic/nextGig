@@ -1,7 +1,6 @@
 import { useSupabaseClient, Session, useUser } from "@supabase/auth-helpers-react";
 import BenButton from "../../components/BenButton";
-// @ts-ignore
-import { Database } from '../utils/database.types'
+import { Database } from "../../db.types"
 import { useRef, useState, useEffect } from 'react'
 import BenLink from "../../components/BenLink";
 import AddGigModal from "../../components/AddGigModal";
