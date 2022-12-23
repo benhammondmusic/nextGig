@@ -23,9 +23,6 @@ export default function Gigs({ session }: { session: Session }) {
 	const [venues, setVenues] = useState<any[]>()
 	const [clients, setClients] = useState<any[]>()
 
-	useEffect(() => console.log(venues))
-
-
 	async function queryAllGigs() {
 		try {
 			setLoading(true)
@@ -146,7 +143,6 @@ export default function Gigs({ session }: { session: Session }) {
 				.insert([clientInfo])
 				.select()
 			resp = data?.[0]
-			console.log({ resp });
 		}
 
 
@@ -207,49 +203,35 @@ export default function Gigs({ session }: { session: Session }) {
 		<>
 			<div className={loading ? "!cursor-wait" : ""}>
 
-				<section className="bg-slate-300 m-5 w-fit">
 
-					<table className="table-auto">
-						<thead>
-							<tr className="bg-slate-200">
-								<th className="text-start w-20"><b>#</b></th>
-								<th className="text-start w-20"><b>Start</b></th>
-								<th className="text-start w-20"><b>End</b></th>
-								<th className="text-start w-20"><b>Venue</b></th>
-								<th className="text-start w-40"><b>Amount Due</b></th>
-								<th className="text-start w-40"><b>Paid?</b></th>
-								<th className="text-start w-40"><b>Delete Gig</b></th>
-								<th className="text-start w-40"><b>Client</b></th>
-							</tr>
-						</thead>
-						<tbody>
-							{gigs?.map((gig, i) => {
+				<ul>
+					{gigs?.map((gig, i) => {
 
-								const { id, amount_due, is_paid, venue: venueId, client: clientId } = gig
+						const { id, amount_due, is_paid, venue: venueId, client: clientId } = gig
 
-								const { startDate, startTime, endDate, endTime } = getDisplayDatesTimes(gig)
+						const { startDate, startTime, endDate, endTime } = getDisplayDatesTimes(gig)
 
-								return <tr key={id} className={i % 2 ? "bg-slate-200" : ""}>
-									<td className="">{id}</td>
-									<td className=""><p>{startDate}</p>{startTime}</td>
-									<td className=""><p>{endDate}</p>{endTime}</td>
-									<td className="">{venues?.find((venue) => venue.id === venueId)?.name}</td>
-									<td className="">${amount_due}</td>
-									<td className="">{is_paid ? "Yes" : "No"} <BenButton loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /> </td>
-									<td className="">
-										<DeleteButton loading={loading} handleClick={() => deleteGig(id)} />
-									</td>
-									<td className="">{clients?.find((client) => client.id === clientId)?.name}</td>
+						const clientName = clients?.find((client) => client.id === clientId)?.name
+						const venueName = venues?.find((venue) => venue.id === venueId)?.name
 
-								</tr>
-							})}
+						return <li key={id} className={`p-2 m-3 ${i % 2 ? "bg-slate-200" : ""}`}>
+							{/* <span className="">{id}</span> */}
+							{(startDate || startTime) && <span className="mx-5"><b>Start:</b> {startDate}{" "}{startTime}</span>}
+							{(endDate || endTime) && <span className="mx-5"><b>End:</b> {endDate}{endTime}</span>}
+							{venueName && <span className="mx-5"><b>Venue:</b> {venueName}</span>}
+							{amount_due && <span className="mx-5"><b>Invoice total:</b> ${amount_due}</span>}
+							<span className="mx-5"><b>{is_paid ? "Paid" : "Unpaid"}</b> <span className="ml-1"><BenButton loading={loading} size="xs" label={`Mark as ${!is_paid ? "paid" : "unpaid"}`} onClick={() => updateGigIsPaid(id, !is_paid)} /></span> </span>
+							{clientName && <span className="mx-5"><b>Client:</b> {clientName}</span>}
+							<span className="mx-3 justify-self-end">
+								<DeleteButton loading={loading} handleClick={() => deleteGig(id)} />
+							</span>
+						</li>
+					})}
 
-						</tbody>
-
-					</table>
+				</ul>
 
 
-				</section>
+
 
 
 				<menu className="m-12">
@@ -287,7 +269,7 @@ function getDisplayDatesTimes(gig: any) {
 	dayjs.extend(localizedFormat)
 	dayjs.extend(customParseFormat)
 
-	const startDate = start_date ? dayjs(start_date).format('MMMD') : "?"
+	const startDate = start_date ? dayjs(start_date).format('MMMD') : ""
 
 	const startTimeDJS = dayjs(start_time, "HH:mm:ss")
 	const startTimeIsOnTheHour = startTimeDJS.minute() === 0

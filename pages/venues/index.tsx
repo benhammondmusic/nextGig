@@ -1,5 +1,6 @@
 import { useSupabaseClient, Session, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
+import { AddNewVenueForm } from "../../components/AddNewVenueForm";
 import BenLink from "../../components/BenLink";
 import { DeleteButton } from "../../components/DeleteButton";
 import { LOCKED } from "../../lib/constants";
@@ -12,8 +13,6 @@ export default function Gigs({ session }: { session: Session }) {
 	const user = useUser()
 	const [loading, setLoading] = useState(true)
 	const [venues, setVenues] = useState<any[]>()
-
-	useEffect(() => console.log(venues))
 
 	async function queryAllVenues() {
 		try {
@@ -101,6 +100,12 @@ export default function Gigs({ session }: { session: Session }) {
 						</li>
 					})}
 
+					<div className="p-5 m-12 bg-slate-200">
+
+						<AddNewVenueForm
+							addNewVenue={addNewVenue}
+						/>
+					</div>
 
 				</ul>
 

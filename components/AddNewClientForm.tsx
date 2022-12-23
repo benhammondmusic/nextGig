@@ -3,8 +3,9 @@ import BenButton from "./BenButton";
 
 interface AddNewClientFormProps {
 	addNewClient: Function,
-	setShowAddClientForm: Dispatch<SetStateAction<boolean>>,
-	handleFieldUpdate: Function
+	handleFieldUpdate?: Function,
+	setShowAddClientForm?: Dispatch<SetStateAction<boolean>>,
+
 }
 
 export function AddNewClientForm(props: AddNewClientFormProps) {
@@ -24,8 +25,8 @@ export function AddNewClientForm(props: AddNewClientFormProps) {
 		}
 
 		const response = await props.addNewClient(newClientInfo)
-		props.setShowAddClientForm(false)
-		props.handleFieldUpdate("clientId", response.id)
+		props.setShowAddClientForm && props.setShowAddClientForm(false)
+		props.handleFieldUpdate && props.handleFieldUpdate("clientId", response.id)
 
 
 

@@ -3,8 +3,8 @@ import BenButton from "./BenButton";
 
 interface AddNewVenueFormProps {
 	addNewVenue: Function,
-	setShowAddVenueForm: Dispatch<SetStateAction<boolean>>,
-	handleFieldUpdate: Function
+	setShowAddVenueForm?: Dispatch<SetStateAction<boolean>>,
+	handleFieldUpdate?: Function
 }
 
 export function AddNewVenueForm(props: AddNewVenueFormProps) {
@@ -21,8 +21,8 @@ export function AddNewVenueForm(props: AddNewVenueFormProps) {
 		}
 
 		const response = await props.addNewVenue(newVenueInfo)
-		props.setShowAddVenueForm(false)
-		props.handleFieldUpdate("venueId", response.id)
+		props.setShowAddVenueForm && props.setShowAddVenueForm(false)
+		props.handleFieldUpdate && props.handleFieldUpdate("venueId", response.id)
 
 
 

@@ -6,16 +6,10 @@ import { useUser, useSupabaseClient, Session } from '@supabase/auth-helpers-reac
 // @ts-ignore
 import { Database } from '../utils/database.types'
 // import Avatar from './Avatar'
+import { useRouter } from "next/router";
+
 
 type Profiles = Database['public']['Tables']['profiles']['Row']
-
-
-const navigation = [
-	{ name: 'Gigs', href: '/', current: true },
-	{ name: 'Clients', href: '/clients', current: false },
-	{ name: 'Venues', href: '/venues', current: false },
-]
-
 
 function classNames(...classes: any[]) {
 	return classes.filter(Boolean).join(' ')
@@ -24,43 +18,18 @@ function classNames(...classes: any[]) {
 
 export default function Navbar() {
 
-	const supabase = useSupabaseClient<Database>()
+	const router = useRouter();
 
-	const [loading, setLoading] = useState(true)
-	const user = useUser()
-	const [avatar_url, setAvatarUrl] = useState<Profiles['avatar_url']>(null)
+	function isCurrent(linkPath: string) {
+		const currentPath = router.pathname
 
-	useEffect(() => {
-		async function getProfile() {
-			try {
-				setLoading(true)
-				if (!user) throw new Error('No user')
-
-				let { data, error, status } = await supabase
-					.from('profiles')
-					.select(`avatar_url`)
-					.eq('id', user.id)
-					.single()
-
-				if (error && status !== 406) {
-					throw error
-				}
-
-				if (data) {
-					setAvatarUrl(data.avatar_url)
-				}
-			} catch (error) {
-				alert('Error loading user data!')
-				console.log(error)
-			} finally {
-				setLoading(false)
-			}
-		}
-
-		getProfile()
-	}, [supabase, user])
-
-
+		return linkPath === currentPath
+	}
+	const navigation = [
+		{ name: 'Gigs', href: '/', current: isCurrent("/") },
+		{ name: 'Clients', href: '/clients', current: isCurrent("/clients") },
+		{ name: 'Venues', href: '/venues', current: isCurrent("/venues") },
+	]
 
 	return (
 		<Disclosure as="nav" className="bg-gray-800">

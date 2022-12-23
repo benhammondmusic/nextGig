@@ -1,5 +1,6 @@
 import { useSupabaseClient, Session, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
+import { AddNewClientForm } from "../../components/AddNewClientForm";
 import BenLink from "../../components/BenLink";
 import { DeleteButton } from "../../components/DeleteButton";
 import { LOCKED } from "../../lib/constants";
@@ -72,7 +73,6 @@ export default function Venues({ session }: { session: Session }) {
 	}
 
 
-
 	useEffect(() => {
 		queryAllClients()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,8 +87,10 @@ export default function Venues({ session }: { session: Session }) {
 						const clientLocked = id === LOCKED
 						return <li key={id} className="flex">
 							<div className="p-2 m-5 bg-slate-200 rounded-sm">
-								<h2 className="M-3">{name}</h2>
-								<span className="M-3">{address}</span>
+								<h2 className="m-3">{name}</h2>
+								<p className="m-3">{address}</p>
+								<p className="m-3">{email}</p>
+								<p className="m-3">{phone}</p>
 
 
 							</div>
@@ -96,17 +98,20 @@ export default function Venues({ session }: { session: Session }) {
 								<div className="grid content-center ">
 									<DeleteButton handleClick={() => deleteClient(id)} loading={loading} />
 								</div>}
-
 						</li>
 					})}
-
-
 				</ul>
 
+				<div className="p-5 m-12 bg-slate-200">
+					<AddNewClientForm
+						addNewClient={addNewClient}
+					/>
+				</div>
+
 				<menu className="m-12">
+
 					<BenLink href="/" label="go home" />
 				</menu>
-
 
 			</div>
 

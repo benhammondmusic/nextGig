@@ -8,11 +8,7 @@ import { AddNewClientForm } from './AddNewClientForm';
 
 // https://tailwindui.com/components/application-ui/forms/input-groups
 
-
 function newGigReducer(state: any, action: any) {
-
-	console.log(state);
-
 
 	switch (action.type) {
 		case 'reset_state': {
