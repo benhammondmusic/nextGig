@@ -1,3 +1,4 @@
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import BenButton from "./BenButton";
 
@@ -21,16 +22,24 @@ export function AddNewVenueForm(props: AddNewVenueFormProps) {
 		}
 
 		const response = await props.addNewVenue(newVenueInfo)
+		setNewVenueAddress("")
+		setNewVenueName("")
+
+		// if venue is being added in the middle of adding a gig
 		props.setShowAddVenueForm && props.setShowAddVenueForm(false)
 		props.handleFieldUpdate && props.handleFieldUpdate("venueId", response.id)
-
 
 
 	}
 
 	return <>
+
+		<PlusCircleIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
 		<div className="flex">
+
 			<div className="my-3 mr-3">
+
+
 				<label htmlFor="new-venue-name" className="block text-sm font-medium text-gray-700">
 					New Venue Name
 				</label>
