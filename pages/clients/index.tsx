@@ -84,20 +84,24 @@ export default function Venues({ session }: { session: Session }) {
 					{clients?.map((client) => {
 						const { name, email, phone, address, id } = client
 						const clientLocked = id === LOCKED
-						return <li key={id} className="flex">
-							<div className="p-2 m-5 bg-slate-200 rounded-sm">
-								<h2 className="m-3">{name}</h2>
-								<p className="m-3">{address}</p>
-								<p className="m-3">{email}</p>
-								<p className="m-3">{phone}</p>
+						return <>
+
+							{!clientLocked && <li key={id} className="flex">
+								<div className="p-2 m-5 bg-slate-200 rounded-sm">
+									<h2 className="m-3">{name}</h2>
+									<p className="m-3">{address}</p>
+									<p className="m-3">{email}</p>
+									<p className="m-3">{phone}</p>
 
 
-							</div>
-							{!clientLocked &&
+								</div>
+
 								<div className="grid content-center ">
 									<DeleteButton handleClick={() => deleteClient(id)} loading={loading} />
-								</div>}
-						</li>
+								</div>
+							</li>}
+
+						</>
 					})}
 				</ul>
 

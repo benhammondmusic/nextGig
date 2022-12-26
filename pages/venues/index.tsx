@@ -84,20 +84,25 @@ export default function Gigs({ session }: { session: Session }) {
 					{venues?.map((venue) => {
 						const { name, address, id } = venue
 						const venueLocked = id === LOCKED
-						return <li key={id} className="flex">
-							<div className="p-2 m-5 bg-slate-200 rounded-sm">
-								<h2 className="M-3">{name}</h2>
-								<span className="M-3">{address}</span>
+						return <>
+
+							{!venueLocked && <li key={id} className="flex">
+								<div className="p-2 m-5 bg-slate-200 rounded-sm">
+									<h2 className="M-3">{name}</h2>
+									<span className="M-3">{address}</span>
 
 
-							</div>
-							{!venueLocked &&
+								</div>
+
 								<div className="grid content-center ">
 									<DeleteButton handleClick={() => deleteVenue(id)} loading={loading} />
-								</div>}
+								</div>
 
-						</li>
-					})}
+							</li>}
+						</>
+					}
+
+					)}
 
 					<div className="p-5 m-12 bg-slate-200">
 
