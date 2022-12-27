@@ -6,12 +6,14 @@ import { DeleteButton } from "../../components/DeleteButton";
 import { LOCKED } from "../../lib/constants";
 import { Database } from "../../db.types"
 
-export default function Venues({ session }: { session: Session }) {
+export type Client = Database['public']['Tables']['clients']['Row']
+
+export default function Clients({ session }: { session: Session }) {
 
 	const supabase = useSupabaseClient<Database>()
 	const user = useUser()
 	const [loading, setLoading] = useState(true)
-	const [clients, setClients] = useState<any[]>()
+	const [clients, setClients] = useState<Client[]>()
 
 
 	async function queryAllClients() {
@@ -19,7 +21,7 @@ export default function Venues({ session }: { session: Session }) {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('clients')
-				.select(`id, name, email, phone, address`)
+				.select()
 				.order('name')
 
 			if (error && status !== 406) {

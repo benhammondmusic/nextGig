@@ -6,19 +6,22 @@ import { DeleteButton } from "../../components/DeleteButton";
 import { LOCKED } from "../../lib/constants";
 import { Database } from "../../db.types"
 
+export type Venue = Database['public']['Tables']['venues']['Row']
+
+
 export default function Gigs({ session }: { session: Session }) {
 
 	const supabase = useSupabaseClient<Database>()
 	const user = useUser()
 	const [loading, setLoading] = useState(true)
-	const [venues, setVenues] = useState<any[]>()
+	const [venues, setVenues] = useState<Venue[]>()
 
 	async function queryAllVenues() {
 		try {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('venues')
-				.select(`id, name, address`)
+				.select()
 				.order('name')
 
 			if (error && status !== 406) {

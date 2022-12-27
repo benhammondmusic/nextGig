@@ -8,7 +8,10 @@ import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { DeleteButton } from "../../components/DeleteButton";
+import { Venue } from "../venues";
+import { Client } from "../clients";
 
+export type Gig = Database['public']['Tables']['gigs']['Row']
 
 export default function Gigs({ session }: { session: Session }) {
 
@@ -18,16 +21,16 @@ export default function Gigs({ session }: { session: Session }) {
 	const supabase = useSupabaseClient<Database>()
 	const user = useUser()
 	const [loading, setLoading] = useState(true)
-	const [gigs, setGigs] = useState<any[]>()
-	const [venues, setVenues] = useState<any[]>()
-	const [clients, setClients] = useState<any[]>()
+	const [gigs, setGigs] = useState<Gig[]>()
+	const [venues, setVenues] = useState<Venue[]>()
+	const [clients, setClients] = useState<Client[]>()
 
 	async function queryAllGigs() {
 		try {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('gigs')
-				.select(`id, is_paid, amount_due, start_date, end_date, start_time, end_time, venue, client`)
+				.select()
 				.order('start_date')
 
 			if (error && status !== 406) {
@@ -49,7 +52,7 @@ export default function Gigs({ session }: { session: Session }) {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('venues')
-				.select(`id, name, address`)
+				.select()
 				.order('name')
 
 			if (error && status !== 406) {
@@ -71,7 +74,7 @@ export default function Gigs({ session }: { session: Session }) {
 			setLoading(true)
 			let { data, error, status } = await supabase
 				.from('clients')
-				.select(`id, name, address, email, phone`)
+				.select()
 				.order('name')
 
 			if (error && status !== 406) {
